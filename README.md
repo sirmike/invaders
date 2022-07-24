@@ -14,12 +14,12 @@ The approach I took is to scan a map with some level of allowed noise (uncertain
 The `App` class is a thin class which uses other dependencies (finders, radar data, invaders data), plus some printing of the result. Printing output could be moved to another class but I did not do that in a sake of brevity.
 
 By default the app searches a radar in 3 different ways:
-* full_scan - it tries to find whole invaders within radar boundaries
-* partial_top_edge - it tries to find partially visible invaders at the top edge of a radar
-* partial_bottom_edge - it tries to find partially visible invaders at the bottom edge of a radar
+* `full_scan` - it tries to find whole invaders within radar boundaries
+* `partial_top_edge` - it tries to find partially visible invaders at the top edge of a radar
+* `partial_bottom_edge` - it tries to find partially visible invaders at the bottom edge of a radar
 
-Many invaders can be added and radar data can albo be initialized by other data.
-Invaders detection mechanism can be easily extended by other algorithms. One may add additional finder classes and inject them when creating the App class.
+Many invaders can be added and radar data can be initialized by other data.
+Invaders detection mechanism can be easily extended by other algorithms just by injecting additional finder classes into the `App`.
 
 ## Default output of a running app
 
