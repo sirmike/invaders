@@ -1,12 +1,11 @@
 class FinderBase
-  def initialize(radar, noise_level_threshold)
-    @radar = radar
+  def initialize(noise_level_threshold)
     @noise_level_threshold = noise_level_threshold
   end
 
   protected
 
-  attr_reader :radar, :noise_level_threshold, :label
+  attr_reader :noise_level_threshold
 
   def calculate_noise_level(radar_signal, invader_signal)
     if radar_signal != invader_signal

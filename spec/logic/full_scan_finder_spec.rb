@@ -16,7 +16,7 @@ describe FullScanFinder do
   let(:noise_level_threshold) { 0 }
 
   subject do
-    described_class.new(radar, noise_level_threshold).find(invader)
+    described_class.new(noise_level_threshold).find(radar, invader)
   end
 
   context 'radar is clear' do

@@ -1,12 +1,12 @@
 require_relative 'finder_base'
 
 class BottomEdgeFinder < FinderBase
-  def initialize(radar, noise_level_threshold, max_roll_down)
+  def initialize(noise_level_threshold, max_roll_down)
     @max_roll_down = max_roll_down
-    super(radar, noise_level_threshold)
+    super(noise_level_threshold)
   end
 
-  def find(invader)
+  def find(radar, invader)
     results = []
 
     max_column = radar.width - invader.width

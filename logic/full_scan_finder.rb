@@ -1,7 +1,7 @@
 require_relative 'finder_base'
 
 class FullScanFinder < FinderBase
-  def find(invader)
+  def find(radar, invader)
     results = []
 
     max_column = radar.width - invader.width

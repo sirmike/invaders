@@ -18,7 +18,7 @@ describe TopEdgeFinder do
   let(:start_at) { 1 }
 
   subject do
-    described_class.new(radar, noise_level_threshold, start_at).find(invader)
+    described_class.new(noise_level_threshold, start_at).find(radar, invader)
   end
 
   context 'radar is clear' do

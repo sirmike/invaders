@@ -20,7 +20,7 @@ describe BottomEdgeFinder do
   let(:max_roll_down) { 2 }
 
   subject do
-    described_class.new(radar, noise_level_threshold, max_roll_down).find(invader)
+    described_class.new(noise_level_threshold, max_roll_down).find(radar, invader)
   end
 
   context 'radar is clear' do
