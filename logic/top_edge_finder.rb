@@ -9,14 +9,14 @@ class TopEdgeFinder < FinderBase
   def find(invader)
     results = []
 
-    max_column = radar.data.width - invader.data.width
+    max_column = radar.width - invader.width
 
     (1..max_roll_up).each do |current_offset|
       (0..max_column).each do |column_idx|
-        noise_level = invader.data.with_each_coord.sum do |invader_vector|
+        noise_level = invader.with_each_coord.sum do |invader_vector|
           next 0 if invader_vector.y < current_offset
-          radar_signal = radar.data.at(column_idx + invader_vector.x, invader_vector.y - current_offset)
-          invader_signal = invader.data.at(invader_vector.x, invader_vector.y)
+          radar_signal = radar.at(column_idx + invader_vector.x, invader_vector.y - current_offset)
+          invader_signal = invader.at(invader_vector.x, invader_vector.y)
           calculate_noise_level(radar_signal, invader_signal)
         end
         if noise_level <= noise_level_threshold

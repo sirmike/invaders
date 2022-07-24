@@ -2,15 +2,9 @@ require './logic/bottom_edge_finder'
 require './logic/data_parser'
 require './models/map_data'
 require './models/vector'
-require './models/radar'
-require './models/invader'
 
 describe BottomEdgeFinder do
-  let(:radar) do
-    Radar.new(radar_data)
-  end
-
-  let(:invader_data) do
+  let(:invader) do
     DataParser.new.parse(
       [
         '--o--',
@@ -22,10 +16,6 @@ describe BottomEdgeFinder do
     )
   end
 
-  let(:invader) do
-    Invader.new(invader_data)
-  end
-
   let(:noise_level_threshold) { 0 }
   let(:max_roll_down) { 2 }
 
@@ -35,7 +25,7 @@ describe BottomEdgeFinder do
 
   context 'radar is clear' do
     context 'invader is partially present' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '-------',
@@ -53,7 +43,7 @@ describe BottomEdgeFinder do
     end
 
     context 'invader is partially present' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '-------',
@@ -71,7 +61,7 @@ describe BottomEdgeFinder do
     end
 
     context 'invader is partially present in the middle' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '--------',
@@ -89,7 +79,7 @@ describe BottomEdgeFinder do
     end
 
     context 'invader too small' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '--------',
@@ -107,7 +97,7 @@ describe BottomEdgeFinder do
     end
 
     context 'no invader found' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '-------',
@@ -126,7 +116,7 @@ describe BottomEdgeFinder do
   end
 
   context 'radar is noisy' do
-    let(:radar_data) do
+    let(:radar) do
       DataParser.new.parse(
         [
           '--------',

@@ -2,15 +2,9 @@ require './logic/top_edge_finder'
 require './logic/data_parser'
 require './models/map_data'
 require './models/vector'
-require './models/radar'
-require './models/invader'
 
 describe TopEdgeFinder do
-  let(:radar) do
-    Radar.new(radar_data)
-  end
-
-  let(:invader_data) do
+  let(:invader) do
     DataParser.new.parse(
       [
         'ooooo',
@@ -18,10 +12,6 @@ describe TopEdgeFinder do
         '--o--',
       ]
     )
-  end
-
-  let(:invader) do
-    Invader.new(invader_data)
   end
 
   let(:noise_level_threshold) { 0 }
@@ -33,7 +23,7 @@ describe TopEdgeFinder do
 
   context 'radar is clear' do
     context 'invader is partially present' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '-ooo-',
@@ -50,7 +40,7 @@ describe TopEdgeFinder do
     end
 
     context 'no invader found' do
-      let(:radar_data) do
+      let(:radar) do
         DataParser.new.parse(
           [
             '-----',
@@ -68,7 +58,7 @@ describe TopEdgeFinder do
   end
 
   context 'radar is noisy' do
-    let(:radar_data) do
+    let(:radar) do
       DataParser.new.parse(
         [
           '-ooo-',
