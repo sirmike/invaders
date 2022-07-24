@@ -1,97 +1,54 @@
 require 'active_support/core_ext/string'
+require_relative 'models/map_data'
+require_relative 'models/radar'
+require_relative 'models/invader'
+require_relative 'models/vector'
+require_relative 'logic/data_parser'
+require_relative 'logic/file_reader'
+require_relative 'logic/full_scan_finder'
+require_relative 'logic/top_edge_finder'
+require_relative 'logic/bottom_edge_finder'
 
-ERROR_TOLERANCE_PERCENTAGE = 25
-
-class FileReader
-  def read(file_path)
-    return IO.readlines(file_path, chomp: true)
-  end
+def print_data(lines)
+  puts lines.slice(0, lines.length)
 end
 
-class MapData
-  attr_accessor :width, :height, :lines, :max_score
-end
-
-class DataParser
-  def parse(lines)
-    first_line = lines.first
-    result = MapData.new.tap do |d|
-      d.width = first_line.length
-      d.height = lines.count
-      d.lines = lines
-      d.max_score = d.width * d.height
-    end
-    result
-  end
-end
-
-class Invader
-  attr_reader :data
-
-  def initialize(data)
-    @data = data
-  end
-end
-
-class Radar
-  attr_reader :data
-
-  def initialize(data)
-    @data = data
-  end
-
-  def find(invader)
-    results = {}
-    score = 0
-    offset_x = 0
-    offset_y = 0
-
-    slice_length = invader.data.lines.first.length
-    while offset_y <= data.lines.length - invader.data.lines.length
-      while offset_x <= data.lines.first.length - slice_length
-        invader.data.lines.each_with_index do |invader_line, line_idx|
-          invader_line.length.times do |character_idx|
-            radar_c = data.lines[offset_y + line_idx].slice(offset_x + character_idx)
-            if radar_c == invader_line[character_idx]
-              score += 1
-            end
-          end
-        end
-        results[score] = [] unless results.has_key?(score)
-        results[score] << [offset_x, offset_y]
-        score = 0
-        offset_x += 1
-      end
-      offset_y += 1
-      offset_x = 0
-    end
-    results
-  end
-end
+NOISE_LEVEL_THRESHOLD = 12
+ROLL_LINES_MAX = 3
 
 map_path = ARGV[0]
 raise 'radar file path must be present' unless map_path.present?
-invader_path = ARGV[1]
-raise 'invader file path must be present' unless invader_path.present?
 
-fr = FileReader.new
-dp = DataParser.new
+file_reader = FileReader.new
+data_parser = DataParser.new
 
-radar_data = dp.parse(fr.read(map_path))
-invader_data = dp.parse(fr.read(invader_path))
-
-puts 'Invader lookup:'
-puts invader_data.lines
-puts
-puts 'Result:'
+radar_data = data_parser.parse(file_reader.read(map_path))
 
 radar = Radar.new(radar_data)
-result = radar.find(Invader.new(invader_data))
-sorted = result.keys.sort
-for s in sorted
-  r = result[s]
-  probability = s.to_f * 100.0 / invader_data.max_score
-  if probability >= 100 - ERROR_TOLERANCE_PERCENTAGE
-    puts "#{probability}%: (#{r[0]}, #{r[1]})"
+full_scan_finder = FullScanFinder.new(radar, NOISE_LEVEL_THRESHOLD)
+top_edge_finder = TopEdgeFinder.new(radar, NOISE_LEVEL_THRESHOLD, ROLL_LINES_MAX)
+bottom_edge_finder = BottomEdgeFinder.new(radar, NOISE_LEVEL_THRESHOLD, ROLL_LINES_MAX)
+finders = [full_scan_finder, top_edge_finder, bottom_edge_finder]
+
+puts "Calibrating noise level threshold: #{NOISE_LEVEL_THRESHOLD}"
+
+['./data/invader_1.txt', './data/invader_2.txt'].each do |invader_data_path|
+  invader_data = data_parser.parse(file_reader.read(invader_data_path))
+  invader = Invader.new(invader_data)
+
+  puts
+  puts 'Looking for:'
+  puts print_data(invader.data.lines)
+
+  puts "Coordinates:"
+  finders.each do |finder|
+    result = finder.find(invader)
+    if result.empty?
+      puts "[#{finder.label}] not found"
+    else
+      for r in result
+        puts "[#{finder.label}] X:#{r.x}, Y:#{r.y}"
+      end
+    end
   end
 end
