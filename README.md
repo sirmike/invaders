@@ -1,5 +1,8 @@
 # Invaders finder
 
+## Requirements
+* Written using Ruby 2.5.8 (but it should work other versions too)
+
 ## How to run
 
 ```
